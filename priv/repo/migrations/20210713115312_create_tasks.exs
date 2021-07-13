@@ -6,8 +6,8 @@ defmodule Tasker.Repo.Migrations.CreateTasks do
 
     create table(:tasks, primary_key: false) do
       add :id, :binary_id, primary_key: true
-      add :pickup, :string
-      add :delivery, :string
+      add :pickup, :geometry
+      add :delivery, :geometry
       add :status, :integer
       add :user_id, references(:users, on_delete: :nilify_all, type: :binary_id)
 

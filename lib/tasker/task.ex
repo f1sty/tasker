@@ -2,6 +2,8 @@ defmodule Tasker.Task do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Geo.PostGIS.Geometry
+
   @statuses_mapping %{
     0 => "new",
     1 => "assigned",
@@ -11,8 +13,8 @@ defmodule Tasker.Task do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "tasks" do
-    field :delivery, :string
-    field :pickup, :string
+    field :delivery, Geometry
+    field :pickup, Geometry
     field :status, :integer, default: 0
     belongs_to :user, Tasker.User
 
