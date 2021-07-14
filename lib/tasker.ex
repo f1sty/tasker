@@ -19,7 +19,7 @@ defmodule Tasker do
     tasks =
       from(task in T,
         where: is_nil(task.user_id),
-        where: task.status == "new",
+        where: task.status == :new,
         select: {st_distance_in_meters(task.pickup, ^location), task},
         limit: ^first
       )

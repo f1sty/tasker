@@ -6,17 +6,14 @@ defmodule Tasker.Task do
 
   @derive {Jason.Encoder, except: [:__meta__, :user]}
 
-  @updateable_statuses [
-    "assigned",
-    "done"
-  ]
+  @statuses ~w[new assigned done]a
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "tasks" do
     field :delivery, Geometry
     field :pickup, Geometry
-    field :status, :string, default: "new"
+    field :status, Ecto.Enum, values: @statuses, default: :new
     belongs_to :user, Tasker.User
 
     timestamps()
@@ -36,6 +33,6 @@ defmodule Tasker.Task do
     task
     |> cast(attrs, [:status, :user_id])
     |> validate_required([:status, :user_id])
-    |> validate_inclusion(:status, @updateable_statuses)
+    |> validate_inclusion(:status, tl(@statuses))
   end
 end
