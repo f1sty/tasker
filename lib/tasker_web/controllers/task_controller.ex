@@ -46,7 +46,7 @@ defmodule TaskerWeb.TaskController do
     end
   end
 
-  def update(conn, _params) do
+  def update(_conn, _params) do
     {:error, :bad_request}
   end
 
