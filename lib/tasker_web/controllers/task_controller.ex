@@ -37,7 +37,7 @@ defmodule TaskerWeb.TaskController do
 
   def update(conn, %{"id" => id, "task" => attrs}) do
     task = Tasker.get_task!(id)
-    attrs = Map.merge(attrs, %{"user_id" => conn.assigns.user_id}) |> IO.inspect()
+    attrs = Map.merge(attrs, %{"user_id" => conn.assigns.user_id})
 
     with {:ok, task} <- Tasker.update_task(task, attrs) do
       render(conn, "task.json", task: task)
