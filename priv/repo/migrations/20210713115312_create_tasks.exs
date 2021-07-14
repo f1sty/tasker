@@ -9,11 +9,11 @@ defmodule Tasker.Repo.Migrations.CreateTasks do
       add :pickup, :geometry
       add :delivery, :geometry
       add :status, :string
-      add :user_id, references(:users, on_delete: :nilify_all, type: :binary_id)
+      add :user_id, references(:users, on_delete: :delete_all, type: :binary_id)
 
       timestamps()
     end
 
-    create index(:tasks, [:user_id, :pickup])
+    create index(:tasks, [:user_id, :status, :pickup])
   end
 end
