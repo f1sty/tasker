@@ -25,7 +25,9 @@ defmodule TaskerWeb.TaskController do
 
   def create(conn, %{"task" => task}) do
     with {:ok, task} <- Tasker.create_task(task) do
-      render(conn, "task.json", task: task)
+      conn
+      |> put_status(:created)
+      |> render("task.json", task: task)
     end
   end
 
@@ -35,13 +37,17 @@ defmodule TaskerWeb.TaskController do
     render(conn, "task.json", task: task)
   end
 
-  def update(conn, %{"id" => id, "task" => attrs}) do
+  def update(conn, %{"id" => id, "task" => %{"status" => _} = attrs}) do
     task = Tasker.get_task!(id)
     attrs = Map.merge(attrs, %{"user_id" => conn.assigns.user_id})
 
     with {:ok, task} <- Tasker.update_task(task, attrs) do
       render(conn, "task.json", task: task)
     end
+  end
+
+  def update(conn, _params) do
+    {:error, :bad_request}
   end
 
   def delete(conn, %{"id" => id}) do

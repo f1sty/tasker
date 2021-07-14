@@ -34,6 +34,6 @@ defmodule Tasker.Factory do
     %Point{coordinates: {longitude(), latitude()}, srid: @srid}
   end
 
-  defp latitude, do: Enum.random(-90..90)
-  defp longitude, do: Enum.random(-180..180)
+  def latitude, do: Enum.random(-90..90)
+  def longitude, do: Enum.random(-180..180)
 end
