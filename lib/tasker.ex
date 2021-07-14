@@ -1,8 +1,6 @@
 defmodule Tasker do
   @moduledoc false
 
-  @secret "secret"
-
   import Ecto.Query
   import Geo.PostGIS
 

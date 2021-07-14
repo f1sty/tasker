@@ -2,11 +2,6 @@ defmodule Tasker.User do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @types_mapping %{
-    0 => "manager",
-    1 => "driver"
-  }
-
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "users" do
