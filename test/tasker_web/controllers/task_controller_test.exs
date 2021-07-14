@@ -18,6 +18,9 @@ defmodule TaskerWeb.TaskControllerTest do
   @update_attrs %{
     "status" => "assigned"
   }
+  @invalid_update_attrs %{
+    "status" => "wrong"
+  }
   @invalid_attrs %{
     "pickup" => %{
       "lat" => latitude(),
@@ -187,6 +190,11 @@ defmodule TaskerWeb.TaskControllerTest do
     test "update renders errors when data is invalid", %{conn: conn, task: task} do
       conn = put(conn, Routes.task_path(conn, :update, task), task: @invalid_attrs)
       assert json_response(conn, 400)["errors"] != %{}
+    end
+
+    test "update renders errors when data type is invalid", %{conn: conn, task: task} do
+      conn = put(conn, Routes.task_path(conn, :update, task), task: @invalid_update_attrs)
+      assert json_response(conn, 422)["errors"] != %{}
     end
 
     test "delete renders errors", %{conn: conn, task: task} do
