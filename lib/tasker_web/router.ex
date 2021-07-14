@@ -20,7 +20,7 @@ defmodule TaskerWeb.Router do
 
   scope "/api", TaskerWeb do
     pipe_through :api
-    resources "/tasks", TaskController, only: [:show]
+    resources "/tasks", TaskController, only: [:index, :show]
   end
 
   scope "/api", TaskerWeb do
@@ -30,6 +30,6 @@ defmodule TaskerWeb.Router do
 
   scope "/api", TaskerWeb do
     pipe_through :driver_api
-    resources "/tasks", TaskController, only: [:index, :update]
+    resources "/tasks", TaskController, only: [:update]
   end
 end

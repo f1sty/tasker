@@ -23,8 +23,10 @@ defmodule TaskerWeb.Plug.Auth do
   defp authorize(conn, value, allowed_user_types) do
     case Phoenix.Token.verify(TaskerWeb.Endpoint, @secret, value) do
       {:ok, %{user_type: user_type}} ->
-        if user_type in allowed_user_types do
-          do_authorize(conn, value)
+        token = Tasker.get_token_by_value(value)
+
+        if token && user_type in allowed_user_types do
+          do_authorize(conn, token)
         else
           unauthorized(conn)
         end
@@ -42,8 +44,7 @@ defmodule TaskerWeb.Plug.Auth do
     |> halt()
   end
 
-  defp do_authorize(conn, value) do
-    token = Tasker.get_token_by_value(value)
+  defp do_authorize(conn, token) do
     assign(conn, :user_id, token.user_id)
   end
 end

@@ -5,24 +5,29 @@ defmodule Tasker do
   import Geo.PostGIS
 
   alias Geo.Point
-  alias Tasker.{Repo, User, Token}
+  alias Tasker.{Repo, Token}
   alias Tasker.Task, as: T
 
-  def list_users do
-    Repo.all(User)
-  end
+  def list_tasks, do: Repo.all(T)
 
-  def list_tasks(location) do
+  def list_nearby_tasks(:error), do: {:error, :bad_request}
+
+  def list_nearby_tasks(attrs) do
+    {first, location} = Map.pop(attrs, "first", 10)
     location = parse_location(location)
 
-    from(task in T,
-      where: is_nil(task.user_id),
-      where: task.status == 0,
-      select: {st_distance_in_meters(task.pickup, ^location), task}
-    )
-    |> Repo.all()
-    |> sort_by_distance_asc()
-    |> remove_distance()
+    tasks =
+      from(task in T,
+        where: is_nil(task.user_id),
+        where: task.status == "new",
+        select: {st_distance_in_meters(task.pickup, ^location), task},
+        limit: ^first
+      )
+      |> Repo.all()
+      |> sort_by_distance_asc()
+      |> remove_distance()
+
+    {:ok, tasks}
   end
 
   def create_task(attrs) do
@@ -38,8 +43,6 @@ defmodule Tasker do
   end
 
   def update_task(%T{} = task, attrs) do
-    attrs = parse_coordinates(attrs)
-
     task
     |> T.update_changeset(attrs)
     |> Repo.update()

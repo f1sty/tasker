@@ -6,18 +6,17 @@ defmodule Tasker.Task do
 
   @derive {Jason.Encoder, except: [:__meta__, :user]}
 
-  @statuses_mapping %{
-    0 => "new",
-    1 => "assigned",
-    2 => "done"
-  }
+  @updateable_statuses [
+    "assigned",
+    "done"
+  ]
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "tasks" do
     field :delivery, Geometry
     field :pickup, Geometry
-    field :status, :integer, default: 0
+    field :status, :string, default: "new"
     belongs_to :user, Tasker.User
 
     timestamps()
@@ -26,9 +25,8 @@ defmodule Tasker.Task do
   @doc false
   def changeset(task, attrs) do
     task
-    |> cast(attrs, [:pickup, :delivery, :status, :user_id])
-    |> validate_required([:pickup, :delivery, :status])
-    |> validate_inclusion(:status, Map.keys(@statuses_mapping))
+    |> cast(attrs, [:pickup, :delivery])
+    |> validate_required([:pickup, :delivery])
   end
 
   @doc """
@@ -38,6 +36,6 @@ defmodule Tasker.Task do
     task
     |> cast(attrs, [:status, :user_id])
     |> validate_required([:status, :user_id])
-    |> validate_inclusion(:status, Map.keys(@statuses_mapping))
+    |> validate_inclusion(:status, @updateable_statuses)
   end
 end

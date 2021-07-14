@@ -17,6 +17,13 @@ defmodule TaskerWeb.FallbackController do
     |> render(:"404")
   end
 
+  def call(conn, {:error, :bad_request}) do
+    conn
+    |> put_status(:bad_request)
+    |> put_view(TaskerWeb.ErrorView)
+    |> render(:"400")
+  end
+
   # def call(conn, {:error, :unauthorized}) do
   #   conn
   #   |> put_status(:unauthorized)

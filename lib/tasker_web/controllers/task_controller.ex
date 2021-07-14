@@ -4,11 +4,21 @@ defmodule TaskerWeb.TaskController do
   use TaskerWeb, :controller
   action_fallback TaskerWeb.FallbackController
 
-  def index(conn, %{"lat" => lat, "lon" => lon} = params) do
-    IO.inspect(params)
-    location = %{"lat" => String.to_integer(lat), "lon" => String.to_integer(lon)}
-    IO.inspect(location)
-    tasks = Tasker.list_tasks(location)
+  def index(conn, %{"lat" => lat, "lon" => lot, "first" => first}) do
+    attrs =
+      with {lat, _} <- Float.parse(lat),
+           {lon, _} <- Float.parse(lot),
+           {first, _} <- Integer.parse(first) do
+        %{"lat" => lat, "lon" => lon, "first" => first}
+      end
+
+    with {:ok, tasks} <- Tasker.list_nearby_tasks(attrs) do
+      render(conn, "tasks.json", tasks: tasks)
+    end
+  end
+
+  def index(conn, _params) do
+    tasks = Tasker.list_tasks()
 
     render(conn, "tasks.json", tasks: tasks)
   end
@@ -19,8 +29,7 @@ defmodule TaskerWeb.TaskController do
     end
   end
 
-  def show(conn, %{"id" => id} = params) do
-    IO.inspect(params)
+  def show(conn, %{"id" => id}) do
     task = Tasker.get_task!(id)
 
     render(conn, "task.json", task: task)
@@ -28,6 +37,7 @@ defmodule TaskerWeb.TaskController do
 
   def update(conn, %{"id" => id, "task" => attrs}) do
     task = Tasker.get_task!(id)
+    attrs = Map.merge(attrs, %{"user_id" => conn.assigns.user_id}) |> IO.inspect()
 
     with {:ok, task} <- Tasker.update_task(task, attrs) do
       render(conn, "task.json", task: task)
