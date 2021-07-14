@@ -10,7 +10,6 @@ defmodule Tasker.User do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "users" do
-    field :type, :integer
     has_one :token, Tasker.Token
     has_many :tasks, Tasker.Task
 
@@ -20,8 +19,7 @@ defmodule Tasker.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:type])
-    |> validate_required([:type])
-    |> validate_inclusion(:type, Map.keys(@types_mapping))
+    |> cast(attrs, [:token])
+    |> validate_required([:token])
   end
 end

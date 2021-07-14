@@ -4,6 +4,8 @@ defmodule Tasker.Task do
 
   alias Geo.PostGIS.Geometry
 
+  @derive {Jason.Encoder, except: [:__meta__, :user]}
+
   @statuses_mapping %{
     0 => "new",
     1 => "assigned",
@@ -26,6 +28,16 @@ defmodule Tasker.Task do
     task
     |> cast(attrs, [:pickup, :delivery, :status, :user_id])
     |> validate_required([:pickup, :delivery, :status])
+    |> validate_inclusion(:status, Map.keys(@statuses_mapping))
+  end
+
+  @doc """
+  Allows driver to apply for the task and change it's status.
+  """
+  def update_changeset(task, attrs) do
+    task
+    |> cast(attrs, [:status, :user_id])
+    |> validate_required([:status, :user_id])
     |> validate_inclusion(:status, Map.keys(@statuses_mapping))
   end
 end
