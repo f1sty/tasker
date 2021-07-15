@@ -181,3 +181,7 @@ Request: *no body*
 Response: *no body*
 
 Status: **204 (No Content)**
+
+### Headers:
+
+`Authorization: Bearer <token>`
